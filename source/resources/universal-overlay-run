@@ -1,0 +1,14 @@
+#!/bin/sh
+# FPS для OpenGL-игр, которым не хватает X Present (NVIDIA, нативный Wayland).
+# В Steam впишите в параметры запуска игры:   universal-overlay-run %command%
+# Vulkan-игры (в т.ч. Proton/DXVK) обёртка не нужна — их видит Vulkan-слой,
+# а OpenGL-игры на Mesa под X11/XWayland меряются без неё.
+#
+# Загружаются обе версии хука: 64- и 32-битная. Загрузчик молча пропускает
+# ту, что не подходит процессу (сообщение «wrong ELF class» безвредно).
+DIR=$(dirname "$(readlink -f "$0")")
+for lib in "$DIR/libuo_glhook.so" "$DIR/libuo_glhook32.so"; do
+    [ -f "$lib" ] && LD_PRELOAD="$lib${LD_PRELOAD:+:$LD_PRELOAD}"
+done
+export LD_PRELOAD
+exec "$@"

@@ -1,0 +1,8 @@
+{
+  "uuid": "universal-overlay@uo.local",
+  "name": "Universal Overlay",
+  "description": "Значок Universal Overlay на панели: левый клик — показать/скрыть оверлей, правый — настройки и выход.",
+  "shell-version": ["45", "46", "47", "48", "49", "50"],
+  "url": "https://github.com/",
+  "version": 1
+}
