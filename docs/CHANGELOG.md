@@ -1,27 +1,30 @@
-# Изменения
+# Changelog
 
 ## 0.1.1
 
-* Вся программа на английском: настройки, оверлей, меню значка, установщик,
-  апдейтер и деинсталлятор.
+* The whole program is in English: settings, overlay, tray menu, installer,
+  updater and uninstaller.
+* Updating from 0.1.0 replaces the old settings shortcut instead of leaving a
+  second one.
 
-## 0.1.0 — первый выпуск
+## 0.1.0 — first release
 
-* Оверлей поверх игр: FPS, время кадра с графиком, 1% / 0.1% low.
-* Графики любых датчиков — сколько угодно, у каждого свои цвет, высота,
-  окно истории и шкала.
-* Гибкий внешний вид: раскладка, шрифт, цвета, фон, скругление, размер
-  оверлея 25–400%, прозрачность, угол экрана и монитор.
-* Настройки: тёмная, светлая или системная тема, 8 акцентных цветов, анимации;
-  изменения применяются к оверлею сразу.
-* Автообновление с GitHub с проверкой SHA-256; старая версия удаляется
-  целиком, настройки сохраняются.
-* Лёгкость: скрытый оверлей не тратит CPU; опрашиваются только показанные
-  датчики; между тиками перерисовывается и отправляется в окно только график.
-* Vulkan-слой и OpenGL-хук в 64- и 32-битной версиях: FPS в 32-битных играх
-  под Proton (DXVK) и в старых OpenGL-играх.
-* OpenGL на Mesa под X11 / XWayland меряется без обёртки, через X Present.
-* Расширение GNOME со значком на панели; на Wayland горячая клавиша
-  назначается в настройках рабочего стола автоматически.
-* Установка без пароля в домашнюю папку: меню приложений, автозапуск,
-  «Обновить» и «Удалить» в контекстном меню значка.
+* In-game overlay: FPS, frame time with a graph, 1% / 0.1% lows.
+* Graphs of any sensor — as many as you like, each with its own color, height,
+  history window and scale.
+* Flexible styling: layout, font, colors, background, corner radius, overlay
+  size 25–400%, opacity, screen corner and monitor.
+* Settings app: dark, light or system theme, 8 accent colors, animations;
+  changes apply to the overlay instantly.
+* Automatic updates from GitHub with SHA-256 verification; the old version is
+  removed completely, settings are kept.
+* Lightweight: the hidden overlay uses no CPU; only displayed sensors are
+  polled; between sensor ticks only the graph is redrawn and sent to the window.
+* Vulkan layer and OpenGL hook in 64- and 32-bit builds: FPS in 32-bit games
+  under Proton (DXVK) and in older OpenGL games.
+* OpenGL on Mesa under X11 / XWayland is measured without a wrapper, through
+  X Present.
+* A GNOME extension with a panel icon; on Wayland the hotkey is assigned in
+  the desktop settings automatically.
+* Installs into your home folder without a password: app menu, autostart,
+  Update and Uninstall in the icon's context menu.

@@ -1,115 +1,112 @@
-# Universal Overlay для Linux
+# Universal Overlay for Linux
 
-Лёгкий оверлей поверх игр: FPS, время кадра с графиком, 1% / 0.1% low,
-графики любых датчиков (загрузка, частоты, температуры GPU/CPU, память),
-гибкая настройка внешнего вида и размера, автообновление с GitHub.
+A lightweight in-game overlay: FPS, frame time with a graph, 1% / 0.1% lows,
+graphs of any sensor (load, clocks, GPU/CPU temperatures, memory), flexible
+styling and size, and automatic updates from GitHub.
 
-**[Скачать последнюю версию](https://github.com/wizzard111/universal-overlay-linux/releases/latest)** —
-`universal-overlay-linux-x86_64.tar.gz` — распакуйте и запустите `./install.sh`.
+**[Download the latest version](https://github.com/wizzard111/universal-overlay-linux/releases/latest)** —
+`universal-overlay-linux-x86_64.tar.gz`: unpack it and run `./install.sh`.
 
-Версии для других систем: [Windows](https://github.com/wizzard111/universal-overlay-windows) · [macOS](https://github.com/wizzard111/universal-overlay-macos).
+Other systems: [Windows](https://github.com/wizzard111/universal-overlay-windows) · [macOS](https://github.com/wizzard111/universal-overlay-macos).
 
-Лицензия — [MIT](../LICENSE). Что нового — [CHANGELOG](CHANGELOG.md).
+License: [MIT](../LICENSE). What's new: [CHANGELOG](CHANGELOG.md). Built together with Claude.
 
-Интерфейс программы — на английском.
+## Install, update, uninstall
 
-## Установка, обновление, удаление
+Only three scripts are at the top; everything else is in folders:
 
-Наверху лежат только три скрипта, остальное — в папках:
-
-| Файл | Что делает |
+| File | What it does |
 |---|---|
-| `install.sh` | Устанавливает или переустанавливает. В архиве релиза берёт готовую программу из `app/`, в клоне репозитория сначала собирает её (нужен [Rust](https://rustup.rs)) |
-| `update.sh` | В клоне с git — забирает изменения, пересобирает и обновляет. Иначе скачивает последний релиз с GitHub, проверяет SHA-256 и обновляет. Старая версия удаляется целиком, настройки остаются |
-| `uninstall.sh` | Удаляет всё, что поставил установщик; про настройки спросит (`--purge` — удалить без вопроса) |
+| `install.sh` | Installs or reinstalls. From a release archive it takes the ready program from `app/`; in a clone of the repository it builds it first (needs [Rust](https://rustup.rs)) |
+| `update.sh` | In a git clone: pulls the changes, rebuilds and updates. Otherwise downloads the latest GitHub release, verifies its SHA-256 and updates. The old version is removed completely; your settings are kept |
+| `uninstall.sh` | Removes everything the installer added; asks about your settings (`--purge` removes them without asking) |
 
-Пароль не нужен: всё ставится в домашнюю папку.
-* Программа — в `~/.local/share/universal-overlay`, команды — в `~/.local/bin`.
-* Приложение и настройки появляются в меню приложений. Там же в контекстном
-  меню значка есть Update и Uninstall.
-* Включается автозапуск.
-* Подключается Vulkan-слой для FPS: и 64-, и 32-битные игры, в том числе
-  32-битный DXVK под Proton.
-* На GNOME ставится своё расширение со значком на панели: левый клик —
-  показать или скрыть, правый — меню. На Wayland значок появится после
-  повторного входа.
-* На Wayland горячая клавиша сама назначается в настройках GNOME / KDE:
-  глобальные клавиши там доступны только рабочему столу.
+No password is needed: everything goes into your home folder.
+* The program goes to `~/.local/share/universal-overlay`, commands to `~/.local/bin`.
+* The app and its settings appear in the app menu; the icon's context menu
+  also has Update and Uninstall.
+* Autostart is enabled.
+* The Vulkan layer for FPS is enabled for both 64- and 32-bit games,
+  including 32-bit DXVK under Proton.
+* On GNOME a small extension adds a panel icon: left click shows/hides the
+  overlay, right click opens the menu. On Wayland the icon appears after
+  signing in again.
+* On Wayland the hotkey is assigned automatically in the GNOME / KDE settings:
+  only the desktop may grab global keys there.
 
-Обновить можно и из настроек: General → Updates.
+You can also update from the app: General → Updates.
 
-## Откуда FPS
+## Where FPS comes from
 
-* **Vulkan** (нативный, Proton / DXVK / VKD3D) — неявный Vulkan-слой. Он
-  только ставит метку времени на `vkQueuePresentKHR` и пишет её в
-  `/dev/shm`, ничего не рисует и не меняет. Отключить для игры:
+* **Vulkan** (native, Proton / DXVK / VKD3D) — an implicit Vulkan layer. It
+  only timestamps `vkQueuePresentKHR` and writes it to `/dev/shm`; it draws
+  nothing and changes nothing. To disable it for a game:
   `DISABLE_UNIVERSAL_OVERLAY=1 %command%`.
-* **OpenGL на Mesa** (AMD, Intel) под X11 / XWayland — без настроек, через
-  события `PresentCompleteNotify` расширения X Present.
-* **OpenGL на NVIDIA или нативном Wayland** — в параметрах запуска игры в
-  Steam: `universal-overlay-run %command%`. Обёртка подгружает крошечный хук
-  (64 и 32 бит), который только ставит метку на `glXSwapBuffers` /
-  `eglSwapBuffers`.
+* **OpenGL on Mesa** (AMD, Intel) under X11 / XWayland — no setup, via the
+  `PresentCompleteNotify` events of the X Present extension.
+* **OpenGL on NVIDIA or native Wayland** — set the game's launch options in
+  Steam to `universal-overlay-run %command%`. The wrapper preloads a tiny hook
+  (64 and 32 bit) that only timestamps `glXSwapBuffers` / `eglSwapBuffers`.
 
-Замеряется процесс активного окна. Если он ничего не выводит, берётся тот,
-что выводил кадры последним (для игр в контейнере Steam).
+The process of the active window is measured. If it presents nothing, the one
+that presented last is used (for games inside the Steam container).
 
-## Возможности
+## Features
 
-* **Время кадра и FPS**, график с подсветкой «плохих» кадров. Пики не
-  теряются: на пиксель рисуется самый медленный кадр.
-* **1% / 0.1% low** — перцентиль или среднее худших кадров.
-* **Графики любых датчиков** — сколько угодно, у каждого свои цвет, высота,
-  окно истории и шкала.
-* **Датчики:** GPU — загрузка, частоты, температуры, потребление
-  (amdgpu hwmon, i915, NVIDIA NVML); CPU — загрузка, частота, температура
-  (k10temp / zenpower / coretemp); RAM.
-* **Внешний вид:** раскладка, шрифт, размеры, цвета, фон, скругление,
-  **размер оверлея** (25–400%), **прозрачность**, угол экрана и монитор.
-* **Настройки** — тёмная или светлая тема (или как в системе), 8 акцентных
-  цветов, анимации, изменения применяются к оверлею сразу.
+* **Frame time and FPS**, a graph that highlights bad frames. Spikes are never
+  lost: each pixel shows the slowest frame.
+* **1% / 0.1% lows** — percentile or average of the worst frames.
+* **Graphs of any sensor** — as many as you like, each with its own color,
+  height, history window and scale.
+* **Sensors:** GPU — load, clocks, temperatures, power (amdgpu hwmon, i915,
+  NVIDIA NVML); CPU — load, clock, temperature (k10temp / zenpower /
+  coretemp); RAM.
+* **Styling:** layout, font, sizes, colors, background, corner radius,
+  **overlay size** (25–400%), **opacity**, screen corner and monitor.
+* **Settings app** — dark, light or system theme, 8 accent colors,
+  animations; changes apply to the overlay instantly.
 
-Горячая клавиша по умолчанию — **Ctrl+Alt+O**. Команды: `universal-overlay
+The default hotkey is **Ctrl+Alt+O**. Commands: `universal-overlay
 --toggle | --show | --hide | --settings | --reload | --quit`.
 
-## Нагрузка
+## Resource use
 
-Скрытый оверлей спит без таймеров и не собирает кадры. Видимый весит ~8 МБ
-памяти. Только показанные датчики опрашиваются. Между тиками перерисовывается
-только график и в X-сервер через общую память (MIT-SHM) уходит только его
-прямоугольник. Рендер программный, без GPU-контекста; low считаются выборкой
-за O(n).
+The hidden overlay sleeps with no timers and captures no frames. The visible
+one takes ~8 MB of memory. Only the sensors that are shown are polled. Between
+ticks only the graph is redrawn, and only its rectangle is sent to the X server
+through shared memory (MIT-SHM). Rendering is software-only with no GPU
+context; lows are computed by O(n) selection.
 
-Проверено в WSL (Debian 13, WSLg): FPS Vulkan через слой (`vkcube`), OpenGL
-через `universal-overlay-run` (ровно 60,00 FPS у программы с vsync 60),
-установка и удаление начисто.
+Tested in WSL (Debian 13, WSLg): Vulkan FPS through the layer (`vkcube`),
+OpenGL through `universal-overlay-run` (exactly 60.00 FPS for a program with
+60 Hz vsync), clean install and uninstall.
 
-## Требования
+## Requirements
 
-X11 или XWayland с композитором (в GNOME, KDE и любом Wayland-окружении он
-есть всегда).
+X11 or XWayland with a compositor (GNOME, KDE and every Wayland desktop always
+have one).
 
-## Сборка
-
-```
-./install.sh                     собрать и установить
-sh source/build/build.sh         только собрать релиз → source/target/dist
-```
-
-Пуш тега `v*` запускает `.github/workflows/release.yml`.
-
-## Структура
+## Building
 
 ```
-install.sh  update.sh  uninstall.sh     установка, обновление, удаление
-docs/                                   документация
+./install.sh                     build and install
+sh source/build/build.sh         build a release only → source/target/dist
+```
+
+Pushing a `v*` tag runs `.github/workflows/release.yml`.
+
+## Layout
+
+```
+install.sh  update.sh  uninstall.sh     install, update, uninstall
+docs/                                   documentation
 source/
-  crates/common     конфиг, горячие клавиши, шрифты, IPC, протокол /dev/shm
-  crates/overlay    оверлей: ядро, рендер, кадры (Vulkan-слой, X Present), датчики, трей
-  crates/settings   приложение настроек
-  crates/updater    апдейтер (curl и tar из системы, проверка SHA-256)
-  crates/vklayer    Vulkan-слой
-  crates/glhook     OpenGL-хук (LD_PRELOAD)
-  resources/        иконка, расширение GNOME, обёртка universal-overlay-run
-  build/            сборка релиза
+  crates/common     config, hotkeys, fonts, IPC, /dev/shm protocol
+  crates/overlay    overlay: core, renderer, frames (Vulkan layer, X Present), sensors, tray
+  crates/settings   settings app
+  crates/updater    updater (the system's curl and tar, SHA-256 check)
+  crates/vklayer    Vulkan layer
+  crates/glhook     OpenGL hook (LD_PRELOAD)
+  resources/        icon, GNOME extension, universal-overlay-run wrapper
+  build/            release build
 ```
