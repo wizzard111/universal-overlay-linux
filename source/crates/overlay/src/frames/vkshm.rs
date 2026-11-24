@@ -309,7 +309,7 @@ pub fn install_layer() -> Result<PathBuf, String> {
         .to_path_buf();
     let lib = dir_exe.join(shm::LAYER_LIBRARY);
     if !lib.is_file() {
-        return Err(format!("не найден {}", lib.display()));
+        return Err(format!("not found: {}", lib.display()));
     }
     let dir = user_layer_dir();
     std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;

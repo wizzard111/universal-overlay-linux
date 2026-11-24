@@ -2698,7 +2698,7 @@ checksum = "ca718471876992059f251e33aafc334346ada08042b7661dd1fe313a9bced557"
 
 [[package]]
 name = "universal-overlay"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "ab_glyph",
  "ksni",
@@ -2710,7 +2710,7 @@ dependencies = [
 
 [[package]]
 name = "universal-overlay-settings"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "eframe",
  "uo-common",
@@ -2718,7 +2718,7 @@ dependencies = [
 
 [[package]]
 name = "universal-overlay-updater"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "serde_json",
  "sha2",
@@ -2727,7 +2727,7 @@ dependencies = [
 
 [[package]]
 name = "uo-common"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "libc",
  "serde",
@@ -2736,7 +2736,7 @@ dependencies = [
 
 [[package]]
 name = "uo-glhook"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "libc",
  "uo-common",
@@ -2744,7 +2744,7 @@ dependencies = [
 
 [[package]]
 name = "uo-vklayer"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "ash",
  "libc",

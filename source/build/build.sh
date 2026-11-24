@@ -1,16 +1,16 @@
 #!/bin/sh
-# Universal Overlay — сборка релиза для Linux.
+# Universal Overlay — release build for Linux.
 #
-# Результат (всё внутри source/target, корень репозитория не трогается):
+# Output (everything inside source/target, the repository root is untouched):
 #   target/package/universal-overlay-linux-<arch>/
-#       install.sh  update.sh  uninstall.sh       <- наверху только они
-#       app/        программа, Vulkan-слой и GL-хук (64 и 32 бит), расширение GNOME
-#   target/dist/universal-overlay-linux-<arch>.tar.gz   (его скачивает апдейтер)
+#       install.sh  update.sh  uninstall.sh       <- the only files at the top
+#       app/        program, Vulkan layer and GL hook (64 and 32 bit), GNOME extension
+#   target/dist/universal-overlay-linux-<arch>.tar.gz   (what the updater downloads)
 #   target/dist/SHA256SUMS-linux.txt
 #
-#   --print-package   последней строкой вывести путь к папке пакета
-# UO_GITHUB_REPO=owner/name — откуда апдейтер берёт релизы.
-# Для 32-битных библиотек: rustup target add i686-unknown-linux-gnu и gcc-multilib.
+#   --print-package   print the package folder as the last line
+# UO_GITHUB_REPO=owner/name — where the updater looks for releases.
+# 32-bit libraries need: rustup target add i686-unknown-linux-gnu and gcc-multilib.
 set -eu
 
 SOURCE=$(cd "$(dirname "$0")/.." && pwd)
@@ -23,14 +23,14 @@ APP=$PKG/app
 DIST=$SOURCE/target/dist
 T32=i686-unknown-linux-gnu
 echo "== Universal Overlay $VERSION (Linux)" >&2
-[ -n "${UO_GITHUB_REPO:-}" ] || echo "   UO_GITHUB_REPO не задан: апдейтер использует wizzard111/universal-overlay-linux" >&2
+[ -n "${UO_GITHUB_REPO:-}" ] || echo "   UO_GITHUB_REPO not set: the updater uses wizzard111/universal-overlay-linux" >&2
 
 cargo build --release --workspace >&2
 HAVE32=0
 if rustup target list --installed 2>/dev/null | grep -qx "$T32"; then
     if cargo build --release --target "$T32" -p uo-vklayer -p uo-glhook >&2; then HAVE32=1; fi
 fi
-[ $HAVE32 = 1 ] || echo "warning: 32-битные библиотеки не собраны (rustup target add $T32; apt install gcc-multilib)" >&2
+[ $HAVE32 = 1 ] || echo "warning: 32-bit libraries not built (rustup target add $T32; apt install gcc-multilib)" >&2
 
 rm -rf "$PKG"
 mkdir -p "$APP/gnome-extension" "$DIST"
@@ -53,5 +53,5 @@ strip "$APP"/*.so 2>/dev/null || true
 
 tar -C "$SOURCE/target/package" -czf "$DIST/$NAME.tar.gz" "$NAME"
 (cd "$DIST" && { sha256sum "$NAME.tar.gz" 2>/dev/null || shasum -a 256 "$NAME.tar.gz"; } > SHA256SUMS-linux.txt)
-echo "== Готово: $DIST/$NAME.tar.gz" >&2
+echo "== Done: $DIST/$NAME.tar.gz" >&2
 if [ "${1:-}" = --print-package ]; then echo "$PKG"; fi

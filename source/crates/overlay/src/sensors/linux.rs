@@ -270,7 +270,7 @@ impl Sensors {
         self.gpu
             .as_ref()
             .map(|g| g.name())
-            .unwrap_or_else(|| "нет".into())
+            .unwrap_or_else(|| "none".into())
     }
 
     pub fn poll(&mut self, s: &mut Snapshot, want: super::Want) {

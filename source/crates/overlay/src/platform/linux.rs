@@ -76,7 +76,7 @@ impl X11 {
         unsafe {
             let dpy = (xl.XOpenDisplay)(std::ptr::null());
             if dpy.is_null() {
-                return Err("не удалось подключиться к X-серверу (переменная DISPLAY)".into());
+                return Err("could not connect to the X server (DISPLAY variable)".into());
             }
             (xl.XSetErrorHandler)(Some(ignore_x_errors));
             let screen = (xl.XDefaultScreen)(dpy);
@@ -653,24 +653,24 @@ impl ksni::Tray for TrayModel {
                 format!(
                     "{}  ({})",
                     if self.visible {
-                        "Скрыть оверлей"
+                        "Hide overlay"
                     } else {
-                        "Показать оверлей"
+                        "Show overlay"
                     },
                     self.hotkey
                 ),
                 "toggle",
             ),
-            item("Настройки…".into(), "settings"),
-            item("Перечитать конфиг".into(), "reload"),
+            item("Settings…".into(), "settings"),
+            item("Reload config".into(), "reload"),
         ];
         v.push(if self.layer {
-            item("Удалить Vulkan-слой".into(), "uninstall-layer")
+            item("Remove Vulkan layer".into(), "uninstall-layer")
         } else {
-            item("Установить Vulkan-слой (для FPS)".into(), "install-layer")
+            item("Install Vulkan layer (for FPS)".into(), "install-layer")
         });
         v.push(ksni::MenuItem::Separator);
-        v.push(item("Выход".into(), "quit"));
+        v.push(item("Exit".into(), "quit"));
         v
     }
 }
@@ -716,7 +716,7 @@ impl App {
         let ok = Hotkey::parse(&self.core.cfg.general.hotkey).is_some_and(|hk| self.x.grab(&hk));
         if !ok {
             eprintln!(
-                "universal-overlay: горячая клавиша {} недоступна; назначьте `universal-overlay --toggle` в настройках DE",
+                "universal-overlay: hotkey {} is unavailable; bind `universal-overlay --toggle` in your desktop settings",
                 self.core.cfg.general.hotkey
             );
         }
@@ -898,9 +898,9 @@ pub fn run() {
     let has = |a: &str| args.iter().any(|x| x == a);
     if has("--install-layer") {
         match frames::install_layer() {
-            Ok(p) => println!("Vulkan-слой установлен: {}", p.display()),
+            Ok(p) => println!("Vulkan layer installed: {}", p.display()),
             Err(e) => {
-                eprintln!("Ошибка: {e}");
+                eprintln!("Error: {e}");
                 std::process::exit(1);
             }
         }
@@ -909,14 +909,14 @@ pub fn run() {
     }
     if has("--uninstall-layer") {
         let _ = frames::uninstall_layer();
-        println!("Vulkan-слой удалён");
+        println!("Vulkan layer removed");
         return;
     }
     if has("--sync-shortcut") {
         let (cfg, _) = uo_common::config::Config::load();
         match super::wayland_shortcut::sync(&cfg.general.hotkey) {
-            Ok(m) => println!("  Горячая клавиша: {m}"),
-            Err(e) => println!("  Горячая клавиша: {e}"),
+            Ok(m) => println!("  Hotkey: {m}"),
+            Err(e) => println!("  Hotkey: {e}"),
         }
         return;
     }
@@ -962,7 +962,7 @@ pub fn run() {
         Ok(l) => l,
         Err(e) => {
             eprintln!(
-                "universal-overlay: не удалось создать {}: {e}",
+                "universal-overlay: could not create {}: {e}",
                 sock.display()
             );
             std::process::exit(1);

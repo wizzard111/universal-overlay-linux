@@ -1,11 +1,11 @@
 #!/bin/sh
-# FPS для OpenGL-игр, которым не хватает X Present (NVIDIA, нативный Wayland).
-# В Steam впишите в параметры запуска игры:   universal-overlay-run %command%
-# Vulkan-игры (в т.ч. Proton/DXVK) обёртка не нужна — их видит Vulkan-слой,
-# а OpenGL-игры на Mesa под X11/XWayland меряются без неё.
+# FPS for OpenGL games that X Present cannot see (NVIDIA, native Wayland).
+# In Steam, set the game's launch options to:   universal-overlay-run %command%
+# Vulkan games (including Proton/DXVK) need no wrapper — the Vulkan layer sees
+# them, and OpenGL games on Mesa under X11/XWayland are measured without it.
 #
-# Загружаются обе версии хука: 64- и 32-битная. Загрузчик молча пропускает
-# ту, что не подходит процессу (сообщение «wrong ELF class» безвредно).
+# Both builds of the hook are preloaded, 64- and 32-bit. The loader silently
+# skips the one that does not fit the process ("wrong ELF class" is harmless).
 DIR=$(dirname "$(readlink -f "$0")")
 for lib in "$DIR/libuo_glhook.so" "$DIR/libuo_glhook32.so"; do
     [ -f "$lib" ] && LD_PRELOAD="$lib${LD_PRELOAD:+:$LD_PRELOAD}"

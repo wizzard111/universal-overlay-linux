@@ -103,18 +103,19 @@ fn format_list(v: &[String]) -> String {
 }
 
 fn gnome_set(hk: &Hotkey, exe: &str) -> Result<(), String> {
-    let accel = gtk_accel(hk).ok_or("клавиша не поддерживается GNOME")?;
-    let cur = gsettings(&["get", GNOME_KEY, "custom-keybindings"]).ok_or("gsettings недоступен")?;
+    let accel = gtk_accel(hk).ok_or("GNOME does not support this key")?;
+    let cur =
+        gsettings(&["get", GNOME_KEY, "custom-keybindings"]).ok_or("gsettings is not available")?;
     let mut list = parse_list(&cur);
     if !list.iter().any(|p| p == GNOME_PATH) {
         list.push(GNOME_PATH.into());
         gsettings(&["set", GNOME_KEY, "custom-keybindings", &format_list(&list)])
-            .ok_or("не удалось записать список")?;
+            .ok_or("could not write the list")?;
     }
     let schema = format!("{GNOME_KEY}.custom-keybinding:{GNOME_PATH}");
     gsettings(&["set", &schema, "name", "Universal Overlay"]);
     gsettings(&["set", &schema, "command", &format!("'{exe}' --toggle")]);
-    gsettings(&["set", &schema, "binding", &accel]).ok_or("не удалось назначить сочетание")?;
+    gsettings(&["set", &schema, "binding", &accel]).ok_or("could not assign the hotkey")?;
     Ok(())
 }
 
@@ -152,10 +153,10 @@ fn kde_set(hk: &Hotkey, exe: &str) -> Result<(), String> {
     std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
     std::fs::write(
         dir.join(KDE_DESKTOP),
-        format!("[Desktop Entry]\nType=Application\nName=Universal Overlay: показать/скрыть\nExec={exe} --toggle\nNoDisplay=true\n"),
+        format!("[Desktop Entry]\nType=Application\nName=Universal Overlay: show/hide\nExec={exe} --toggle\nNoDisplay=true\n"),
     )
     .map_err(|e| e.to_string())?;
-    let tool = kwriteconfig().ok_or("kwriteconfig не найден")?;
+    let tool = kwriteconfig().ok_or("kwriteconfig not found")?;
     let st = Command::new(tool)
         .args([
             "--file",
@@ -173,7 +174,7 @@ fn kde_set(hk: &Hotkey, exe: &str) -> Result<(), String> {
     if st.success() {
         Ok(())
     } else {
-        Err("kwriteconfig завершился с ошибкой".into())
+        Err("kwriteconfig failed".into())
     }
 }
 
@@ -198,19 +199,18 @@ fn kde_remove() {
 
 /// Register `hotkey` with the current desktop. Returns a human message.
 pub fn sync(hotkey: &str) -> Result<String, String> {
-    let hk = Hotkey::parse(hotkey).ok_or("сочетание не распознано")?;
+    let hk = Hotkey::parse(hotkey).ok_or("hotkey not recognized")?;
     let exe = std::env::current_exe().map_err(|e| e.to_string())?;
     let exe = exe.to_string_lossy();
     let d = desktop();
     if d.contains("gnome") || d.contains("unity") || d.contains("budgie") || d.contains("cinnamon")
     {
-        gnome_set(&hk, &exe).map(|_| format!("GNOME: {hotkey} → показать/скрыть"))
+        gnome_set(&hk, &exe).map(|_| format!("GNOME: {hotkey} → show/hide"))
     } else if d.contains("kde") || d.contains("plasma") {
-        kde_set(&hk, &exe)
-            .map(|_| format!("KDE: {hotkey} → показать/скрыть (после повторного входа)"))
+        kde_set(&hk, &exe).map(|_| format!("KDE: {hotkey} → show/hide (after signing in again)"))
     } else {
         Err(format!(
-            "окружение «{d}»: назначьте `{exe} --toggle` на сочетание вручную"
+            "desktop \"{d}\": bind `{exe} --toggle` to a hotkey manually"
         ))
     }
 }

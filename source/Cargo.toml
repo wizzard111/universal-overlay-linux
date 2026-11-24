@@ -3,12 +3,12 @@ resolver = "2"
 members = ["crates/common", "crates/overlay", "crates/settings", "crates/updater", "crates/vklayer", "crates/glhook"]
 
 [workspace.package]
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 license = "MIT"
 repository = "https://github.com/wizzard111/universal-overlay-linux"
 homepage = "https://github.com/wizzard111/universal-overlay-linux"
-description = "Лёгкий оверлей FPS, времени кадра и датчиков для Linux"
+description = "Lightweight FPS, frame-time and sensor overlay for Linux"
 
 [profile.release]
 opt-level = 3

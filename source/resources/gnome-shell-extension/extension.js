@@ -1,10 +1,10 @@
-// Universal Overlay — значок на панели GNOME Shell (45+).
+// Universal Overlay — panel icon for GNOME Shell (45+).
 //
-// GNOME не показывает значки StatusNotifierItem без стороннего расширения,
-// поэтому это маленькое расширение рисует собственный значок. Оно ничего не
-// хранит и не опрашивает: каждый пункт меню просто запускает
-// `universal-overlay --<команда>`, а уже запущенный оверлей получает её по IPC.
-// Левый клик — показать/скрыть оверлей, правый — меню.
+// GNOME shows no StatusNotifierItem icons without a third-party extension,
+// so this small extension draws its own icon. It stores and polls nothing:
+// every menu item just runs `universal-overlay --<command>`, and the running
+// overlay receives it over IPC. Left click shows/hides the overlay, right
+// click opens the menu.
 
 import GObject from 'gi://GObject';
 import St from 'gi://St';
@@ -27,7 +27,7 @@ function overlayExe() {
 function run(...args) {
     const exe = overlayExe();
     if (!exe) {
-        Main.notifyError('Universal Overlay', 'Программа не найдена — установите её заново');
+        Main.notifyError('Universal Overlay', 'Program not found — please reinstall it');
         return;
     }
     try {
@@ -50,11 +50,11 @@ class UniversalOverlayIndicator extends PanelMenu.Button {
             i.connect('activate', () => run(...args));
             this.menu.addMenuItem(i);
         };
-        item('Показать / скрыть оверлей', '--toggle');
-        item('Настройки…', '--settings');
-        item('Перечитать конфиг', '--reload');
+        item('Show / hide overlay', '--toggle');
+        item('Settings…', '--settings');
+        item('Reload config', '--reload');
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
-        item('Выход', '--quit');
+        item('Exit', '--quit');
     }
 
     vfunc_event(event) {
